@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>系統登入</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5" style="max-width: 400px;">
+        <h2 class="text-center mb-4">請假系統 - 登入</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <div class="card p-4 shadow-sm">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">帳號</label>
+                    <input type="text" name="username" class="form-content form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">密碼</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">登入</button>
+            </form>
+            <div class="text-center mt-3">
+                <a href="/register">還沒有帳號？前往註冊</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
