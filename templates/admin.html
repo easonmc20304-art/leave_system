@@ -1,53 +1,45 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理員後台 - 請假紀錄</title>
-    <link href="https://jsdelivr.net" rel="stylesheet">
+    <title>管理員控制台</title>
+    <link rel="stylesheet" href="https://jsdelivr.net">
 </head>
 <body class="bg-light">
-    <div class="container-fluid container-md mt-4 px-3">
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
-            <h3 class="fw-bold text-dark m-0">🔒 管理員後台 - 請假總表</h3>
-            <a href="/logout" class="btn btn-danger px-4 rounded-pill fw-bold shadow-sm">安全登出</a>
-        </div>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} text-center py-2">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <div class="card shadow border-0 rounded-3 p-3 overflow-hidden">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle m-0 text-nowrap" style="min-width: 600px;">
-                    <thead class="table-dark">
-                        <tr>
-                            <th style="width: 10%">流水號</th>
-                            <th style="width: 25%">申請人 (姓名/ID)</th>
-                            <th style="width: 45%">請假事由與時間</th>
-                            <th style="width: 20%">送出時間</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for record in records %}
-                        <tr>
-                            <!-- 配合後端改回最安全的數字索引 -->
-                            <td>{{ record[0] }}</td>
-                            <td><span class="badge bg-secondary text-wrap text-start fs-6 p-2">{{ record[1] }}</span></td>
-                            <td class="text-wrap" style="max-width: 300px; white-space: normal !important;">{{ record[2] }}</td>
-                            <td><small class="text-muted">{{ record[3] }}</small></td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="4" class="text-center text-muted py-4">目前尚無任何員工提交請假單。</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h3>假單管理後台</h3>
+                <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm">安全登出</a>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title mb-4">目前收到的請假申請：</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>編號</th>
+                                <th>申請人資訊</th>
+                                <th>請假原因與時段</th>
+                                <th>申請時間</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in records %}
+                            <tr>
+                                <td>{{ record[0] }}</td>
+                                <td><strong>{{ record[1] }}</strong></td>
+                                <td>{{ record[2] }}</td>
+                                <td><small class="text-muted">{{ record[3] }}</small></td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">目前沒有任何請假紀錄。</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
