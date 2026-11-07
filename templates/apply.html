@@ -1,39 +1,37 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>填寫請假單</title>
-    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link rel="stylesheet" href="https://jsdelivr.net">
 </head>
 <body class="bg-light">
-    <div class="container mt-4 px-3" style="max-width: 540px;">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="fw-bold text-dark m-0">你好，{{ name }} 👋</h3>
-            <a href="/logout" class="btn btn-sm btn-outline-danger px-3 rounded-pill">登出</a>
-        </div>
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} py-2 text-center">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <div class="card p-4 shadow border-0 rounded-3">
-            <h4 class="card-title fw-bold text-primary mb-3">線上請假申請單</h4>
-            <form method="POST">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">請輸入您的「姓名」或「員工ID」</label>
-                    <input type="text" name="user_info" class="form-control" placeholder="例如: 王小明 (ID: 1024)" required>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">請假事由 / 日期與時間段</label>
-                    <textarea name="reason" class="form-control" rows="5" placeholder="範例：10/25 病假一日，因發燒需就醫休養。" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">提交請假申請</button>
-            </form>
+    <div class="container mt-5" style="max-width: 600px;">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <span>線上請假申請系統</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm">登出 ({{ name }})</a>
+            </div>
+            <div class="card-body">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">申請人與部門資訊</label>
+                        <input type="text" name="user_info" class="form-control" placeholder="例如：研發部 - 王小明" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">請假事由與時間</label>
+                        <textarea name="reason" class="form-control" rows="4" placeholder="請註明請假種類、日期與詳細原因" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-info text-white w-100">送出請假申請</button>
+                </form>
+            </div>
         </div>
     </div>
 </body>
