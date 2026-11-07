@@ -8,11 +8,7 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your_default_secret_key')
 
 # 確保在雲端平台上，資料庫會儲存在持久化硬碟中（通常掛載在 /data），在自己電腦則照常生在同資料夾
-if os.path.exists('/data'):
-    DB_FILE = '/data/system.db'
-else:
-    DB_FILE = 'system.db'
-
+DB_FILE = 'system.db'
 # 初始化資料庫
 def init_db():
     conn = sqlite3.connect(DB_FILE)
