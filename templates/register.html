@@ -1,46 +1,47 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>帳號註冊</title>
-    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link rel="stylesheet" href="https://jsdelivr.net">
 </head>
 <body class="bg-light">
-    <div class="container mt-5 px-3" style="max-width: 420px;">
-        <h2 class="text-center mb-4 fw-bold text-secondary">建立新帳號</h2>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} py-2 text-center">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        <div class="card p-4 shadow border-0 rounded-3">
-            <form method="POST">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">真實姓名</label>
-                    <input type="text" name="name" class="form-control" placeholder="您的名字" required>
+    <div class="container mt-5" style="max-width: 450px;">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white text-center"><h3>加入系統</h3></div>
+            <div class="card-body">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">真實姓名</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">登入帳號</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">登入密碼</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">身分權限</label>
+                        <select name="role" class="form-select">
+                            <option value="employee">一般員工</option>
+                            <option value="admin">管理員</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">註冊帳號</button>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('login') }}">已有帳號？返回登入</a>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">登入帳號</label>
-                    <input type="text" name="username" class="form-control" placeholder="設定登入帳號" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">登入密碼</label>
-                    <input type="password" name="password" class="form-control" placeholder="設定登入密碼" required>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">註冊身份</label>
-                    <select name="role" class="form-select">
-                        <option value="employee">一般員工 (填寫請假)</option>
-                        <option value="admin">系統管理員 (檢視後台)</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-success w-100 py-2 fw-bold">完成註冊</button>
-            </form>
-            <div class="text-center mt-3">
-                <a href="/login" class="text-decoration-none text-muted small">← 已有帳號？返回登入</a>
             </div>
         </div>
     </div>
