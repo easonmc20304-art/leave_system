@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your_default_secret_key')
 
-DB_FILE = 'system.db'
+DB_FILE = 'leave_data.db'
 
 # 初始化資料庫
 def init_db():
