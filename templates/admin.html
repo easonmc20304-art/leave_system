@@ -35,11 +35,11 @@
                     <tbody>
                         {% for record in records %}
                         <tr>
-                            <!-- 修正：明確指定 Tuple 的索引值，避免網頁解析崩潰 -->
-                            <td>{{ record[0] }}</td>
-                            <td><span class="badge bg-secondary text-wrap text-start fs-6 p-2">{{ record[1] }}</span></td>
-                            <td class="text-wrap" style="max-width: 300px; white-space: normal !important;">{{ record[2] }}</td>
-                            <td><small class="text-muted">{{ record[3] }}</small></td>
+                            <!-- 全面升級：改用明確的字典 Key 讀取資料，永遠不會錯位與報錯！ -->
+                            <td>{{ record['id'] }}</td>
+                            <td><span class="badge bg-secondary text-wrap text-start fs-6 p-2">{{ record['user_info'] }}</span></td>
+                            <td class="text-wrap" style="max-width: 300px; white-space: normal !important;">{{ record['reason'] }}</td>
+                            <td><small class="text-muted">{{ record['applied_at'] }}</small></td>
                         </tr>
                         {% else %}
                         <tr>
