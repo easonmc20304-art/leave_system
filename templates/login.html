@@ -1,35 +1,36 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>系統登入</title>
-    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link rel="stylesheet" href="https://jsdelivr.net">
 </head>
 <body class="bg-light">
-    <div class="container mt-5 px-3" style="max-width: 420px;">
-        <h2 class="text-center mb-4 fw-bold text-secondary">請假系統</h2>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} py-2 text-center">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        <div class="card p-4 shadow border-0 rounded-3">
-            <form method="POST">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">帳號 (Username)</label>
-                    <input type="text" name="username" class="form-control" placeholder="請輸入帳號" required>
+    <div class="container mt-5" style="max-width: 450px;">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center"><h3>請假系統登入</h3></div>
+            <div class="card-body">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">帳號</label>
+                        <input type="text" name="username" class="form-control" required placeholder="管理員預設為 admin">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">密碼</label>
+                        <input type="password" name="password" class="form-control" required placeholder="管理員預設為 admin123">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">登入</button>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('register') }}">還沒有帳號？點此註冊</a>
                 </div>
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">密碼 (Password)</label>
-                    <input type="password" name="password" class="form-control" placeholder="請輸入密碼" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">安全登入</button>
-            </form>
-            <div class="text-center mt-3">
-                <a href="/register" class="text-decoration-none text-muted small">還沒有帳號？前往註冊 →</a>
             </div>
         </div>
     </div>
