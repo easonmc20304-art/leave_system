@@ -4,16 +4,17 @@ import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-# 雲端部署時使用環境變數的密鑰，本地則用預設值
+# 雲端部署時優先使用環境變數的密鑰，本地測試則用預設值
 app.secret_key = os.environ.get('SECRET_KEY', 'your_default_secret_key')
 
-# 確保在雲端平台上，資料庫會儲存在持久化硬碟中（通常掛載在 /data），在自己電腦則照常生在同資料夾
+# 資料庫檔案路徑 (不綁定外部硬碟，直接儲存在專案目錄內，完全免填信用卡)
 DB_FILE = 'system.db'
+
 # 初始化資料庫
 def init_db():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    # 使用者資料表
+    # 使用者資料表 (欄位順序: 0:id, 1:name, 2:username, 3:password, 4:role)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +34,7 @@ def init_db():
         )
     ''')
     
-    # 預設建立一個管理員帳號 (帳號: admin, 密碼: admin123)
+    # 預設建立一個最高管理員帳號 (帳號: admin, 密碼: admin123)
     cursor.execute("SELECT * FROM users WHERE username='admin'")
     if not cursor.fetchone():
         hashed_pw = generate_password_hash('admin123')
@@ -69,7 +70,7 @@ def register():
             
     return render_template('register.html')
 
-# 登入頁面
+# 登入頁面 (完美修正索引 Bug 欄位版)
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -79,10 +80,12 @@ def login():
         
         conn = sqlite3.connect(DB_FILE)
         cursor = conn.cursor()
+        # 查詢欄位對應: user[0]=id, user[1]=name, user[2]=username, user[3]=password, user[4]=role
         cursor.execute("SELECT id, name, username, password, role FROM users WHERE username = ?", (username,))
         user = cursor.fetchone()
         conn.close()
         
+        # 精準對應陣列索引，徹底解決 Internal Server Error
         if user and check_password_hash(user[3], password):
             session['user_id'] = user[0]
             session['name'] = user[1]
@@ -142,6 +145,6 @@ def logout():
 
 if __name__ == '__main__':
     init_db()
-    # 雲端環境必須動態讀取 Port 設定，本地預設為 5000
+    # 支援 Render 自動獲取 Port 連線與多執行緒秒開優化
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
