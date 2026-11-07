@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>帳號註冊</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5" style="max-width: 400px;">
+        <h2 class="text-center mb-4">系統註冊</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <div class="card p-4 shadow-sm">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">真實姓名</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">登入帳號</label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">登入密碼</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">註冊身分</label>
+                    <select name="role" class="form-select">
+                        <option value="employee">一般員工</option>
+                        <option value="admin">管理員</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success w-100">註冊</button>
+            </form>
+            <div class="text-center mt-3">
+                <a href="/login">已有帳號？返回登入</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
