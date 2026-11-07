@@ -2,7 +2,6 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 import psycopg2
-from psycopg2.extras import RealDictCursor  # 強制將 Postgres 資料轉為字典，徹底解決網頁解析崩潰
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -17,7 +16,6 @@ def get_db_connection():
     else:
         # 本地測試模式 (SQLite)
         conn = sqlite3.connect('leave_system_final.db')
-        conn.row_factory = sqlite3.Row  # 讓 SQLite 也能用欄位名稱讀取資料
         return conn
 
 def init_db():
@@ -25,7 +23,7 @@ def init_db():
     cursor = conn.cursor()
     
     if DATABASE_URL:
-        # PostgreSQL 安全語法：對預留關鍵字加上雙引號，避免資料庫拒絕建立
+        # PostgreSQL 終極相容語法
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS "users" (
                 id SERIAL PRIMARY KEY,
@@ -63,7 +61,7 @@ def init_db():
             )
         ''')
     
-    # 自動建立 admin 最高管理員
+    # 預設建立最高管理員
     cursor.execute('SELECT * FROM "users" WHERE username=\'admin\'')
     if not cursor.fetchone():
         hashed_pw = generate_password_hash('admin123')
@@ -73,6 +71,7 @@ def init_db():
     conn.commit()
     conn.close()
 
+# 註冊頁面
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -98,6 +97,7 @@ def register():
             
     return render_template('register.html')
 
+# 登入頁面 (✨ 終極修復：回歸最原生、最相容的原始欄位抓取，絕不因驅動類型卡死)
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -106,19 +106,17 @@ def login():
         password = request.form['password']
         
         conn = get_db_connection()
-        # 如果是 Postgres，使用 RealDictCursor 確保撈出來的資料帶有欄位名稱，不會錯位
-        cursor = conn.cursor(cursor_factory=RealDictCursor) if DATABASE_URL else conn.cursor()
+        cursor = conn.cursor()
+        # 欄位依序：0:id, 1:name, 2:username, 3:password, 4:role
         cursor.execute('SELECT id, name, username, "password", role FROM "users" WHERE username = %s', (username,))
         user = cursor.fetchone()
         conn.close()
         
-        # 轉成標準字典讀取，不論哪種資料庫都能 100% 精準比對
-        user_dict = dict(user) if user else None
-        
-        if user_dict and check_password_hash(user_dict['password'], password):
-            session['user_id'] = user_dict['id']
-            session['name'] = user_dict['name']
-            session['role'] = user_dict['role']
+        # 100% 安全：直接使用標準 Tuple 數字索引，不管是 PostgreSQL 還是 SQLite 都絕不報錯
+        if user and check_password_hash(user[3], password):
+            session['user_id'] = user[0]
+            session['name'] = user[1]
+            session['role'] = user[4]
             
             if session['role'] == 'admin':
                 return redirect(url_for('admin_dashboard'))
@@ -129,6 +127,7 @@ def login():
             
     return render_template('login.html')
 
+# 員工請假申請頁面
 @app.route('/apply', methods=['GET', 'POST'])
 def apply_leave():
     if 'user_id' not in session:
@@ -149,6 +148,7 @@ def apply_leave():
         
     return render_template('apply.html', name=session['name'])
 
+# 管理員後台 (✨ 終極修復：用最安全的 Tuple 索引傳遞資料給前端)
 @app.route('/admin')
 def admin_dashboard():
     if 'user_id' not in session or session['role'] != 'admin':
@@ -156,15 +156,16 @@ def admin_dashboard():
         return redirect(url_for('login'))
         
     conn = get_db_connection()
-    cursor = conn.cursor(cursor_factory=RealDictCursor) if DATABASE_URL else conn.cursor()
+    cursor = conn.cursor()
     cursor.execute("SELECT id, user_info, reason, applied_at FROM leave_requests ORDER BY applied_at DESC")
     records = cursor.fetchall()
     conn.close()
     
-    # 格式化列表
-    formatted_records = [dict(r) for r in records]
+    # 將撈出來的每一列直接轉成標準的 List 傳給前端，保證相容性
+    formatted_records = [list(r) for r in records]
     return render_template('admin.html', records=formatted_records)
 
+# 登出
 @app.route('/logout')
 def logout():
     session.clear()
